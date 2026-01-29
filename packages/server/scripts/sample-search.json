@@ -1,0 +1,13 @@
+{
+  "rank": {
+    "query": [0.1, 0.2, 0.8, 0.3, 0.4],
+    "limit": 20
+  },
+  "where": {
+    "category": "AI"
+  },
+  "select": {
+    "keys": ["#document", "#score", "category", "topic"]
+  },
+  "limit": 5
+}

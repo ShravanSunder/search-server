@@ -1,0 +1,20 @@
+{
+  "_comment": "Find completed transactions in finance or engineering department with amount > 10000",
+  "rank": {
+    "query": [0.7, 0.3, 0.2, 0.4, 0.4],
+    "limit": 50
+  },
+  "where": {
+    "$and": [
+      { "status": "completed" },
+      { "amount": { "$gt": 10000 } },
+      {
+        "$or": [
+          { "department": "finance" },
+          { "department": "engineering" }
+        ]
+      }
+    ]
+  },
+  "limit": 10
+}

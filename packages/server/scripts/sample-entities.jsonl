@@ -1,0 +1,18 @@
+# Sample entities for testing the entity manager script
+# Each entity includes a pre-computed embedding (5-dimensional for testing)
+# In production, you would use real embeddings from an embedding model
+
+{"id":"ai-001","content":"Machine learning is a subset of artificial intelligence","embedding":[0.1,0.2,0.8,0.3,0.4],"metadata":{"category":"AI","topic":"machine-learning","year":2024}}
+{"id":"ai-002","content":"Deep learning uses neural networks with multiple layers","embedding":[0.15,0.25,0.75,0.35,0.45],"metadata":{"category":"AI","topic":"deep-learning","year":2024}}
+{"id":"ai-003","content":"Natural language processing handles text understanding","embedding":[0.2,0.3,0.7,0.4,0.5],"metadata":{"category":"AI","topic":"nlp","year":2024}}
+{"id":"ai-004","content":"Computer vision enables machines to interpret visual data","embedding":[0.25,0.35,0.65,0.45,0.55],"metadata":{"category":"AI","topic":"computer-vision","year":2023}}
+{"id":"ai-005","content":"Reinforcement learning learns through rewards and penalties","embedding":[0.12,0.22,0.78,0.32,0.42],"metadata":{"category":"AI","topic":"reinforcement-learning","year":2024}}
+{"id":"db-001","content":"Vector databases store high-dimensional embeddings efficiently","embedding":[0.5,0.6,0.3,0.7,0.2],"metadata":{"category":"Database","topic":"vector-db","year":2024}}
+{"id":"db-002","content":"ChromaDB is an open-source embedding database for AI","embedding":[0.55,0.65,0.25,0.75,0.15],"metadata":{"category":"Database","topic":"chromadb","year":2024}}
+{"id":"db-003","content":"Approximate nearest neighbor algorithms enable fast similarity search","embedding":[0.52,0.62,0.28,0.72,0.18],"metadata":{"category":"Database","topic":"ann","year":2023}}
+{"id":"web-001","content":"Hono is an ultrafast web framework for the Edge","embedding":[0.8,0.1,0.2,0.3,0.9],"metadata":{"category":"Web","topic":"hono","year":2024}}
+{"id":"web-002","content":"TypeScript is a strongly typed programming language","embedding":[0.75,0.15,0.25,0.35,0.85],"metadata":{"category":"Web","topic":"typescript","year":2024}}
+{"id":"web-003","content":"REST APIs use HTTP methods for CRUD operations","embedding":[0.7,0.2,0.3,0.4,0.8],"metadata":{"category":"Web","topic":"rest-api","year":2023}}
+{"id":"search-001","content":"Semantic search understands meaning and context of queries","embedding":[0.3,0.4,0.6,0.5,0.35],"metadata":{"category":"Search","topic":"semantic-search","year":2024}}
+{"id":"search-002","content":"Reciprocal Rank Fusion combines multiple ranked lists","embedding":[0.35,0.45,0.55,0.55,0.3],"metadata":{"category":"Search","topic":"rrf","year":2024}}
+{"id":"search-003","content":"Embedding models convert text into vector representations","embedding":[0.32,0.42,0.58,0.52,0.33],"metadata":{"category":"Search","topic":"embeddings","year":2024}}

@@ -1,0 +1,26 @@
+{
+  "_comment": "Complex nested: (HR payroll/bonus with amount > 50k) OR (Finance transactions pending) OR (any settlement)",
+  "rank": {
+    "query": [0.75, 0.25, 0.15, 0.35, 0.45],
+    "limit": 50
+  },
+  "where": {
+    "$or": [
+      {
+        "$and": [
+          { "department": "hr" },
+          { "$or": [{ "type": "payroll" }, { "type": "bonus" }] },
+          { "amount": { "$gte": 50000 } }
+        ]
+      },
+      {
+        "$and": [
+          { "department": "finance" },
+          { "status": "pending" }
+        ]
+      },
+      { "type": "settlement" }
+    ]
+  },
+  "limit": 10
+}
