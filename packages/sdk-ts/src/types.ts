@@ -1,3 +1,5 @@
+// These are stubs and fake types that shoulkd nto be follwoed, yoku will rewrite this when you have the actual types.
+
 export interface SearchQuery {
   query: string;
   limit?: number;
