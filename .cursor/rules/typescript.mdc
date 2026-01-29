@@ -1,0 +1,70 @@
+---
+alwaysApply: true
+---
+# TypeScript Rules
+
+## Types
+
+- **No `any` type** - Always use explicit, narrow types or generics
+- **Use `satisfies` over `as` casts** - Prefer `satisfies` for type checking without losing type inference
+  - Example: `const config = { ... } satisfies ConfigType` instead of `const config = ... as ConfigType`
+- **Strict types everywhere**
+  - Enable `strict: true` in tsconfig (already configured)
+  - Always provide explicit return types on functions
+  - Always provide explicit parameter types
+  - Use discriminated unions instead of loose object types
+- **Generics over `any`**
+  - Use `<T>`, `<T extends SomeType>` for flexible, type-safe functions
+  - Example: `function getValue<T>(obj: Record<string, T>, key: string): T`
+- **Prefer readonly for immutable data**
+  - Use `readonly` on array and object properties when data shouldn't be mutated
+  - Example: `pkColumns: readonly string[]` instead of `pkColumns: string[]`
+
+## Function Signatures
+
+- Always explicitly type parameters and return types
+  - Good: `function fetch<T>(url: string): Promise<T> { ... }`
+  - Bad: `function fetch(url) { ... }` (missing types)
+- For functions with >3 parameters, use an interface or type alias
+  - Example: `interface QueryProps { table: string; filters: Filter[]; limit?: number }`
+  - Then: `function query(props: QueryProps): Promise<Row[]>`
+- Use union types for multiple valid return states instead of nullable generics
+  - Example: `type Result<T> = { ok: true; data: T } | { ok: false; error: Error }`
+
+## Type Organization
+
+- Colocate type definitions near their usage
+- Use `interface` for object contracts, `type` for aliases and unions
+- Prefer discriminated unions for variant handling
+  - Example: `type Change = { type: 'insert'; data: Row } | { type: 'delete'; id: string }`
+
+## Naming & Organization
+
+- **Descriptive folder names** - Use multi-word, descriptive folder names that clearly convey purpose
+  - Good: `src/database-adapters/`, `src/query-builders/`, `src/error-handlers/`
+  - Bad: `src/db/`, `src/sync/`
+- **Descriptive file names** - Use clear, descriptive file names that indicate the file's responsibility
+  - Good: `database-connection.ts`, `query-builder.ts`, `error-handler.ts`
+  - Bad: `db.ts`, `util.ts`, `helper.ts`
+
+## Formatting & Style
+
+- Use 2-space indentation (Biome default)
+- Follow Biome linting rules without exceptions
+- Use `const` by default; only use `let` when mutation is necessary
+- Prefer template literals over string concatenation
+
+## Schema Validation
+
+- **Prefer Zod schema derivation over TypeScript type inference** - Keep validation and types in sync
+  - Use Zod's `.omit()`, `.pick()`, `.partial()`, `.merge()` methods to derive related schemas
+
+## Tools
+
+- Use `biome check <path>` to check for errors and warnings
+- Use `biome check --fix <path>` to fix errors and warnings
+- Use `pnpm vitest run <path>` to run the tests
+
+## Build & Type Check
+
+- **Build workspace packages before type checking** - When working with packages that use conditional exports, ensure they're built first
