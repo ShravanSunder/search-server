@@ -45,8 +45,17 @@ packages/
 # Install dependencies
 pnpm install
 
-# Start ChromaDB (requires Docker)
+# Start ChromaDB (choose one method)
+
+# Option 1: Using Python/uv (recommended for local dev)
+uv venv && uv pip install chromadb
+.venv/bin/chroma run --host 0.0.0.0 --port 8000 --path /tmp/chroma-data &
+
+# Option 2: Using Docker
 docker run -p 8000:8000 chromadb/chroma
+
+# Verify ChromaDB is running
+curl http://localhost:8000/api/v2/heartbeat
 
 # Start the server
 cd packages/server

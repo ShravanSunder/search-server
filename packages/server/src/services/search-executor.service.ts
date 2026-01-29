@@ -37,37 +37,52 @@ export class SearchExecutorService {
       throw new Error("rank (KNN or RRF) is required");
     }
 
-    // 2. Apply offset (server-side, ChromaDB query doesn't support it)
+    // 2. Branch: grouped vs ungrouped
+    if (request.groupBy) {
+      // GroupBy FIRST on all results (before pagination/selection)
+      const allGroups = this.groupByProcessor.process(results, request.groupBy);
+      const totalItems = allGroups.reduce((sum, g) => sum + g.items.length, 0);
+
+      // Paginate GROUPS (not items)
+      const offset = this.getOffset(request.limit);
+      const limit = this.getLimit(request.limit);
+      const paginatedGroups = allGroups.slice(
+        offset,
+        limit !== undefined ? offset + limit : undefined
+      );
+
+      // Field selection on items within paginated groups (last)
+      if (request.select) {
+        for (const group of paginatedGroups) {
+          group.items = this.selectProcessor.process(group.items, request.select);
+        }
+      }
+
+      const took = performance.now() - startTime;
+      return {
+        grouped: true,
+        groups: paginatedGroups,
+        totalGroups: allGroups.length,
+        totalItems,
+        took,
+      };
+    }
+
+    // Ungrouped: paginate items, then select
     const offset = this.getOffset(request.limit);
     if (offset > 0) {
       results = results.slice(offset);
     }
 
-    // 3. Apply limit
     const limit = this.getLimit(request.limit);
     if (limit !== undefined) {
       results = results.slice(0, limit);
     }
 
-    // 4. Apply field selection
     if (request.select) {
       results = this.selectProcessor.process(results, request.select);
     }
 
-    // 5. Apply GroupBy aggregation (if present)
-    if (request.groupBy) {
-      const groups = this.groupByProcessor.process(results, request.groupBy);
-      const took = performance.now() - startTime;
-      return {
-        grouped: true,
-        groups,
-        totalGroups: groups.length,
-        totalItems: groups.reduce((sum, g) => sum + g.items.length, 0),
-        took,
-      };
-    }
-
-    // 6. Return non-grouped response
     const took = performance.now() - startTime;
     return {
       grouped: false,

@@ -76,7 +76,7 @@ export class GroupByAggregatorService {
       if (value === undefined) return undefined;
       values.push(value as string | number | boolean);
     }
-    return values.join("|");
+    return JSON.stringify(values);
   }
 
   private getFieldValue(item: SearchResultItem, field: string): unknown {

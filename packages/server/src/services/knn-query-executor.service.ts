@@ -19,6 +19,13 @@ export class KnnQueryExecutorService {
     where?: WhereClause,
     whereDocument?: WhereDocumentClause
   ): Promise<SearchResultItem[]> {
+    // Reject custom embedding keys until feature is implemented
+    if (knn.key !== undefined && knn.key !== "#embedding") {
+      throw new Error(
+        `Custom embedding key "${knn.key}" is not yet supported. Use default #embedding or omit the key parameter.`
+      );
+    }
+
     // Determine if query is embedding or text
     const isTextQuery = typeof knn.query === "string";
 

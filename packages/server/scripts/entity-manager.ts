@@ -40,6 +40,12 @@
 import { createReadStream } from "node:fs";
 import { createInterface } from "node:readline";
 import { parseArgs } from "node:util";
+import type {
+  SearchRequest,
+  SearchResultItem,
+  GroupedSearchResult,
+  SearchResponse,
+} from "@search-server/sdk";
 
 interface Entity {
   id: string;
@@ -148,46 +154,6 @@ async function uploadEntities(
     );
   }
 }
-
-interface SearchRequest {
-  rank: {
-    query: string | number[];
-    limit?: number;
-    returnRank?: boolean;
-  } | {
-    ranks: Array<{ query: string | number[]; limit?: number; returnRank?: boolean }>;
-    k?: number;
-    weights?: number[];
-    normalize?: boolean;
-  };
-  where?: Record<string, unknown>;
-  whereDocument?: Record<string, unknown>;
-  limit?: number | { limit: number; offset?: number };
-  select?: { keys: string[] };
-  groupBy?: {
-    keys: { field: string } | Array<{ field: string }>;
-    aggregate: { $min_k: { keys: { field: string }; k: number } } | { $max_k: { keys: { field: string }; k: number } };
-  };
-}
-
-interface SearchResultItem {
-  id: string;
-  document?: string;
-  embedding?: number[];
-  metadata?: Record<string, unknown>;
-  score?: number;
-  distance?: number;
-}
-
-interface GroupedResult {
-  groupKey: string;
-  groupValue: string | number | boolean;
-  items: SearchResultItem[];
-}
-
-type SearchResponse =
-  | { grouped: false; results: SearchResultItem[]; total: number; took: number }
-  | { grouped: true; groups: GroupedResult[]; totalGroups: number; totalItems: number; took: number };
 
 async function loadSearchRequest(input: string): Promise<SearchRequest> {
   // Check if input is a file path

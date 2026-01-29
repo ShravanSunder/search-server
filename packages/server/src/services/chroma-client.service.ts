@@ -56,21 +56,8 @@ export class ChromaClientService {
 
   async listCollections(): Promise<CollectionInfo[]> {
     const collections = await this.client.listCollections();
-    // ChromaDB returns array of strings in newer versions
-    const result: CollectionInfo[] = [];
-    for (const col of collections as unknown[]) {
-      if (typeof col === "string") {
-        result.push({ name: col });
-      } else {
-        const typed = col as { name: string; metadata?: Metadata };
-        if (typed.metadata) {
-          result.push({ name: typed.name, metadata: typed.metadata });
-        } else {
-          result.push({ name: typed.name });
-        }
-      }
-    }
-    return result;
+    // ChromaDB returns strings in current versions
+    return collections.map((col) => ({ name: col }));
   }
 
   async deleteCollection(name: string): Promise<void> {

@@ -10,6 +10,7 @@ import {
   peekDocumentsRequestSchema,
 } from "@search-server/sdk";
 import type { AppEnv } from "../app-context.js";
+import { getCollectionName } from "./route-utils.js";
 
 export const documentsRouter = new Hono<AppEnv>();
 
@@ -18,7 +19,7 @@ documentsRouter.post(
   "/add",
   zValidator("json", addDocumentsRequestSchema),
   async (c) => {
-    const name = c.req.param("name") ?? "";
+    const name = getCollectionName(c);
     const body = c.req.valid("json");
     const chromaClient = c.get("chromaClient");
 
@@ -42,7 +43,7 @@ documentsRouter.post(
   "/get",
   zValidator("json", getDocumentsRequestSchema),
   async (c) => {
-    const name = c.req.param("name") ?? "";
+    const name = getCollectionName(c);
     const body = c.req.valid("json");
     const chromaClient = c.get("chromaClient");
 
@@ -73,7 +74,7 @@ documentsRouter.post(
   "/query",
   zValidator("json", queryDocumentsRequestSchema),
   async (c) => {
-    const name = c.req.param("name") ?? "";
+    const name = getCollectionName(c);
     const body = c.req.valid("json");
     const chromaClient = c.get("chromaClient");
 
@@ -105,7 +106,7 @@ documentsRouter.post(
   "/update",
   zValidator("json", updateDocumentsRequestSchema),
   async (c) => {
-    const name = c.req.param("name") ?? "";
+    const name = getCollectionName(c);
     const body = c.req.valid("json");
     const chromaClient = c.get("chromaClient");
 
@@ -129,7 +130,7 @@ documentsRouter.post(
   "/upsert",
   zValidator("json", upsertDocumentsRequestSchema),
   async (c) => {
-    const name = c.req.param("name") ?? "";
+    const name = getCollectionName(c);
     const body = c.req.valid("json");
     const chromaClient = c.get("chromaClient");
 
@@ -153,7 +154,7 @@ documentsRouter.delete(
   "/documents",
   zValidator("json", deleteDocumentsRequestSchema),
   async (c) => {
-    const name = c.req.param("name") ?? "";
+    const name = getCollectionName(c);
     const body = c.req.valid("json");
     const chromaClient = c.get("chromaClient");
 
@@ -173,7 +174,7 @@ documentsRouter.delete(
 
 // GET /count - Count documents
 documentsRouter.get("/count", async (c) => {
-  const name = c.req.param("name") ?? "";
+  const name = getCollectionName(c);
   const chromaClient = c.get("chromaClient");
 
   const collection = await chromaClient.getCollection(name);
@@ -187,7 +188,7 @@ documentsRouter.post(
   "/peek",
   zValidator("json", peekDocumentsRequestSchema),
   async (c) => {
-    const name = c.req.param("name") ?? "";
+    const name = getCollectionName(c);
     const body = c.req.valid("json");
     const chromaClient = c.get("chromaClient");
 

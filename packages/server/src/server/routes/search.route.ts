@@ -6,12 +6,13 @@ import {
 } from "@search-server/sdk";
 import { SearchExecutorService } from "../../services/search-executor.service.js";
 import type { AppEnv } from "../app-context.js";
+import { getCollectionName } from "./route-utils.js";
 
 export const searchRouter = new Hono<AppEnv>();
 
 // POST / - Search API (main endpoint)
 searchRouter.post("/", zValidator("json", searchRequestSchema), async (c) => {
-  const name = c.req.param("name") ?? "";
+  const name = getCollectionName(c);
   const body = c.req.valid("json");
   const chromaClient = c.get("chromaClient");
 
@@ -27,7 +28,7 @@ searchRouter.post(
   "/batch",
   zValidator("json", batchSearchRequestSchema),
   async (c) => {
-    const name = c.req.param("name") ?? "";
+    const name = getCollectionName(c);
     const body = c.req.valid("json");
     const chromaClient = c.get("chromaClient");
 

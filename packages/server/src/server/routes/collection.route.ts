@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { createCollectionRequestSchema } from "@search-server/sdk";
 import type { AppEnv } from "../app-context.js";
+import { getCollectionName } from "./route-utils.js";
 
 export const collectionsRouter = new Hono<AppEnv>();
 
@@ -50,7 +51,7 @@ collectionsRouter.get("/", async (c) => {
 
 // GET /:name - Get collection
 collectionsRouter.get("/:name", async (c) => {
-  const name = c.req.param("name");
+  const name = getCollectionName(c);
   const chromaClient = c.get("chromaClient");
 
   const collection = await chromaClient.getCollection(name);
@@ -68,7 +69,7 @@ collectionsRouter.get("/:name", async (c) => {
 
 // DELETE /:name - Delete collection
 collectionsRouter.delete("/:name", async (c) => {
-  const name = c.req.param("name");
+  const name = getCollectionName(c);
   const chromaClient = c.get("chromaClient");
 
   await chromaClient.deleteCollection(name);
