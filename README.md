@@ -4,26 +4,11 @@ A vector search API built on ChromaDB with support for KNN queries, RRF fusion, 
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      Hono HTTP Server                       │
-├─────────────────────────────────────────────────────────────┤
-│  Routes                                                     │
-│  ├── /health              Health check                      │
-│  ├── /collections         Collection CRUD                   │
-│  ├── /collections/:name   Document operations (add/get/del) │
-│  └── /collections/:name/search   Search endpoint            │
-├─────────────────────────────────────────────────────────────┤
-│  Services                                                   │
-│  ├── ChromaClientService       ChromaDB connection          │
-│  ├── KnnQueryExecutor          Vector similarity search     │
-│  ├── RrfFusionService          Multi-query rank fusion      │
-│  ├── FieldSelectorService      Response field projection    │
-│  ├── GroupByAggregator         Result grouping              │
-│  └── SearchExecutorService     Orchestrates search pipeline │
-├─────────────────────────────────────────────────────────────┤
-│                        ChromaDB                             │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    Client --> Hono[Hono Server]
+    Hono --> Chroma[ChromaDB]
+    Chroma --> EFS[(EFS)]
 ```
 
 ## Packages
@@ -211,3 +196,10 @@ pnpm test:integration
 - **Validation**: [Zod](https://zod.dev)
 - **Build**: Vite
 - **Package Manager**: pnpm (monorepo)
+
+## Deployment
+
+- Hono server and ChromaDB run in separate pods in EKS
+- ChromaDB uses EFS for persistent storage (staging and prod)
+- Evaluation deployment - not scaled for full rollout
+- Target: Vector DB deployment by next week, CDC pipeline ~Feb 9th
