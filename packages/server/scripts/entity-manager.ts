@@ -6,22 +6,22 @@
  *
  * Usage:
  *   # Upload entities from JSONL file
- *   pnpm entity upload <collection> <file.jsonl> [--server-url=http://localhost:3001]
+ *   pnpm entity upload <collection> <file.jsonl> [--server-url=http://localhost:3000]
  *
  *   # Search for entities
- *   pnpm entity search <collection> <query> [--limit=10] [--server-url=http://localhost:3001]
+ *   pnpm entity search <collection> <query> [--limit=10] [--server-url=http://localhost:3000]
  *
  *   # List collections
- *   pnpm entity list [--server-url=http://localhost:3001]
+ *   pnpm entity list [--server-url=http://localhost:3000]
  *
  *   # Create collection
- *   pnpm entity create <collection> [--server-url=http://localhost:3001]
+ *   pnpm entity create <collection> [--server-url=http://localhost:3000]
  *
  *   # Delete collection
- *   pnpm entity delete <collection> [--server-url=http://localhost:3001]
+ *   pnpm entity delete <collection> [--server-url=http://localhost:3000]
  *
  *   # Count documents in collection
- *   pnpm entity count <collection> [--server-url=http://localhost:3001]
+ *   pnpm entity count <collection> [--server-url=http://localhost:3000]
  *
  * JSONL Format:
  *   Each line should be a JSON object with:
@@ -57,14 +57,14 @@ interface ParsedArgs {
 function parseCliArgs(): ParsedArgs {
   const { values } = parseArgs({
     options: {
-      "server-url": { type: "string", default: "http://localhost:3001" },
+      "server-url": { type: "string", default: "http://localhost:3000" },
       limit: { type: "string", default: "10" },
     },
     allowPositionals: true,
   });
 
   return {
-    serverUrl: values["server-url"] ?? "http://localhost:3001",
+    serverUrl: values["server-url"] ?? "http://localhost:3000",
     limit: Number.parseInt(values.limit ?? "10", 10),
   };
 }
@@ -297,7 +297,7 @@ Commands:
   count <collection>                 Count documents in collection
 
 Options:
-  --server-url=<url>   Server URL (default: http://localhost:3001)
+  --server-url=<url>   Server URL (default: http://localhost:3000)
 
 Search Request:
   <request> can be:
@@ -333,7 +333,7 @@ JSONL Format (for upload):
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const command = args[0];
-  const { serverUrl, limit } = parseCliArgs();
+  const { serverUrl } = parseCliArgs();
 
   if (!command || command === "help" || command === "--help") {
     printUsage();

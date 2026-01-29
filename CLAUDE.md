@@ -18,14 +18,11 @@ packages/
 
 ## Starting ChromaDB
 
-The TypeScript chromadb client is CLIENT-ONLY - it connects to a running ChromaDB server. Use Python's chromadb to run the server:
+The TypeScript chromadb client is CLIENT-ONLY - it connects to a running ChromaDB server. Use `uvx` to run the server without installing anything:
 
 ```bash
-# Create venv and install chromadb (one-time setup)
-uv venv && uv pip install chromadb
-
 # Start ChromaDB server (run in background)
-.venv/bin/chroma run --host 0.0.0.0 --port 8000 --path /tmp/chroma-data &
+uvx --from chromadb chroma run --host 0.0.0.0 --port 8000 --path /tmp/chroma-data &
 
 # Verify it's running
 curl http://localhost:8000/api/v2/heartbeat

@@ -47,25 +47,23 @@ pnpm install
 
 # Start ChromaDB (choose one method)
 
-# Option 1: Using Python/uv (recommended for local dev)
-uv venv && uv pip install chromadb
-.venv/bin/chroma run --host 0.0.0.0 --port 8000 --path /tmp/chroma-data &
+## Using uvx (recommended - no install needed) - open a new terminal and run:
+uvx --from chromadb chroma run --host 0.0.0.0 --port 8000 --path /tmp/chroma-data &
 
-# Option 2: Using Docker
-docker run -p 8000:8000 chromadb/chroma
 
-# Verify ChromaDB is running
+## Verify ChromaDB is running - open a new terminal and run:
 curl http://localhost:8000/api/v2/heartbeat
 
-# Start the server
+## Start the server - open a new terminal and run:
 cd packages/server
 pnpm dev
 
-# Create collection and upload sample data
+## Create collection and upload sample data - open a new terminal and run:
+cd packages/server
 pnpm entity create my-collection
 pnpm entity upload my-collection scripts/sample-entities.jsonl
 
-# Run a search
+## Run a search - open a new terminal and run:
 pnpm entity search my-collection scripts/sample-search.json
 ```
 
