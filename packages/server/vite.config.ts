@@ -11,8 +11,19 @@ export default defineConfig({
     },
     outDir: "dist",
     emptyOutDir: true,
+    target: "node20",
     rollupOptions: {
-      external: ["@search-server/sdk"],
+      external: [
+        "@search-server/sdk",
+        "@hono/node-server",
+        "@hono/zod-validator",
+        "chromadb",
+        "hono",
+        "hono/cors",
+        "hono/logger",
+        "hono/http-exception",
+        /^node:.*/,
+      ],
     },
   },
   plugins: [
@@ -21,4 +32,16 @@ export default defineConfig({
       outDir: "dist",
     }),
   ],
+  test: {
+    globals: true,
+    environment: "node",
+    include: ["src/**/*.test.ts"],
+    exclude: ["src/**/*.integration.test.ts"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      include: ["src/services/**/*.ts"],
+      exclude: ["src/**/*.test.ts"],
+    },
+  },
 });

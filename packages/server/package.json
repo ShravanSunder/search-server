@@ -7,15 +7,25 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "vite build",
+    "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
   },
   "dependencies": {
-    "@search-server/sdk": "workspace:*"
+    "@hono/node-server": "^1.13.7",
+    "@hono/zod-validator": "^0.4.2",
+    "@search-server/sdk": "workspace:*",
+    "chromadb": "^1.10.4",
+    "chromadb-default-embed": "^2.14.0",
+    "hono": "^4.7.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.7",
+    "@vitest/coverage-v8": "^3.0.4",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "vite": "^6.0.7",
     "vite-plugin-dts": "^4.4.0",
