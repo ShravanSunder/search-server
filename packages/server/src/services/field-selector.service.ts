@@ -1,21 +1,14 @@
-import type {
-  SearchResultItem,
-  SelectClause,
-  DefaultMetadata,
-} from "@search-server/sdk";
+import type { DefaultMetadata, SearchResultItem, SelectClause } from "@search-server/sdk";
 
 export class FieldSelectorService {
-  process(
-    results: readonly SearchResultItem[],
-    select: SelectClause
-  ): SearchResultItem[] {
+  process(results: readonly SearchResultItem[], select: SelectClause): SearchResultItem[] {
     const keysSet = new Set(select.keys);
     const includeAll = keysSet.size === 0;
     const includeMetadata = keysSet.has("#metadata");
 
     // Find specific metadata fields (not #metadata)
     const specificMetadataFields = select.keys.filter(
-      (k): k is string => typeof k === "string" && !k.startsWith("#")
+      (k): k is string => typeof k === "string" && !k.startsWith("#"),
     );
 
     return results.map((item) => {

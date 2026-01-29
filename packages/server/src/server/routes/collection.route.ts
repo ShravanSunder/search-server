@@ -1,40 +1,36 @@
-import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { createCollectionRequestSchema } from "@search-server/sdk";
+import { Hono } from "hono";
 import type { AppEnv } from "../app-context.js";
 import { getCollectionName } from "./route-utils.js";
 
 export const collectionsRouter = new Hono<AppEnv>();
 
 // POST / - Create collection
-collectionsRouter.post(
-  "/",
-  zValidator("json", createCollectionRequestSchema),
-  async (c) => {
-    const body = c.req.valid("json");
-    const chromaClient = c.get("chromaClient");
+collectionsRouter.post("/", zValidator("json", createCollectionRequestSchema), async (c) => {
+  const body = c.req.valid("json");
+  const chromaClient = c.get("chromaClient");
 
-    const collection = await chromaClient.createCollection(
-      body.name,
-      body.metadata,
-      body.getOrCreate
-    );
+  const collection = await chromaClient.createCollection(
+    body.name,
+    body.metadata,
+    body.getOrCreate,
+  );
 
-    const count = await collection.count();
+  const count = await collection.count();
 
-    return c.json(
-      {
-        collection: {
-          name: collection.name,
-          id: collection.id,
-          metadata: collection.metadata,
-          count,
-        },
+  return c.json(
+    {
+      collection: {
+        name: collection.name,
+        id: collection.id,
+        metadata: collection.metadata,
+        count,
       },
-      201
-    );
-  }
-);
+    },
+    201,
+  );
+});
 
 // GET / - List collections
 collectionsRouter.get("/", async (c) => {

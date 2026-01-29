@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { whereClauseSchema } from "./where-filter.schema.js";
-import { whereDocumentClauseSchema } from "./where-document-filter.schema.js";
+import { groupByClauseSchema } from "./aggregation.schema.js";
 import { selectClauseSchema } from "./field-selection.schema.js";
 import { knnQuerySchema } from "./knn-query.schema.js";
 import { rrfClauseSchema } from "./rrf-ranking.schema.js";
-import { groupByClauseSchema } from "./aggregation.schema.js";
+import { whereDocumentClauseSchema } from "./where-document-filter.schema.js";
+import { whereClauseSchema } from "./where-filter.schema.js";
 
 // ============================================================================
 // Limit Clause Schema (pagination)

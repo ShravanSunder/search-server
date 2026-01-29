@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
-  ChromaResultTransformerService,
   type ChromaQueryResult,
+  ChromaResultTransformerService,
 } from "../chroma-result-transformer.service.js";
 
 describe("ChromaResultTransformerService", () => {

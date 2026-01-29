@@ -1,4 +1,4 @@
-import type { SearchResultItem, DefaultMetadata } from "@search-server/sdk";
+import type { DefaultMetadata, SearchResultItem } from "@search-server/sdk";
 
 export interface ChromaQueryResult {
   ids: string[][];
@@ -11,7 +11,7 @@ export interface ChromaQueryResult {
 export class ChromaResultTransformerService {
   transformQueryResults(
     chromaResults: ChromaQueryResult,
-    returnRank?: boolean
+    returnRank?: boolean,
   ): SearchResultItem[] {
     const results: SearchResultItem[] = [];
 
@@ -28,9 +28,7 @@ export class ChromaResultTransformerService {
       if (!id) continue;
 
       const rawMetadata = metadatas?.[i];
-      const metadata = rawMetadata
-        ? (rawMetadata as DefaultMetadata)
-        : undefined;
+      const metadata = rawMetadata ? (rawMetadata as DefaultMetadata) : undefined;
 
       const item: SearchResultItem = {
         id,

@@ -1,10 +1,10 @@
-import type { Collection } from "chromadb";
 import type {
   KnnQuery,
+  SearchResultItem,
   WhereClause,
   WhereDocumentClause,
-  SearchResultItem,
 } from "@search-server/sdk";
+import type { Collection } from "chromadb";
 import { ChromaResultTransformerService } from "./chroma-result-transformer.service.js";
 
 export class KnnQueryExecutorService {
@@ -17,12 +17,12 @@ export class KnnQueryExecutorService {
   async execute(
     knn: KnnQuery,
     where?: WhereClause,
-    whereDocument?: WhereDocumentClause
+    whereDocument?: WhereDocumentClause,
   ): Promise<SearchResultItem[]> {
     // Reject custom embedding keys until feature is implemented
     if (knn.key !== undefined && knn.key !== "#embedding") {
       throw new Error(
-        `Custom embedding key "${knn.key}" is not yet supported. Use default #embedding or omit the key parameter.`
+        `Custom embedding key "${knn.key}" is not yet supported. Use default #embedding or omit the key parameter.`,
       );
     }
 
@@ -59,7 +59,7 @@ export class KnnQueryExecutorService {
         metadatas: results.metadatas ?? null,
         distances: results.distances ?? null,
       },
-      knn.returnRank
+      knn.returnRank,
     );
   }
 }

@@ -1,13 +1,13 @@
 import { z } from "zod";
 import {
-  documentIdSchema,
-  documentContentSchema,
-  embeddingSchema,
   defaultMetadataSchema,
+  documentContentSchema,
+  documentIdSchema,
+  embeddingSchema,
   includeOptionsSchema,
 } from "./common.schema.js";
-import { whereClauseSchema } from "./where-filter.schema.js";
 import { whereDocumentClauseSchema } from "./where-document-filter.schema.js";
+import { whereClauseSchema } from "./where-filter.schema.js";
 
 // ============================================================================
 // Add Documents Schemas
@@ -20,10 +20,9 @@ export const addDocumentsRequestSchema = z
     embeddings: z.array(embeddingSchema).readonly().optional(),
     metadatas: z.array(defaultMetadataSchema).readonly().optional(),
   })
-  .refine(
-    (data) => data.documents !== undefined || data.embeddings !== undefined,
-    { message: "Either documents or embeddings must be provided" }
-  );
+  .refine((data) => data.documents !== undefined || data.embeddings !== undefined, {
+    message: "Either documents or embeddings must be provided",
+  });
 
 export type AddDocumentsRequest = z.infer<typeof addDocumentsRequestSchema>;
 
@@ -71,34 +70,21 @@ export const queryDocumentsRequestSchema = z
     whereDocument: whereDocumentClauseSchema.optional(),
     include: includeOptionsSchema.optional(),
   })
-  .refine(
-    (data) =>
-      data.queryEmbeddings !== undefined || data.queryTexts !== undefined,
-    { message: "Either queryEmbeddings or queryTexts must be provided" }
-  );
+  .refine((data) => data.queryEmbeddings !== undefined || data.queryTexts !== undefined, {
+    message: "Either queryEmbeddings or queryTexts must be provided",
+  });
 
 export type QueryDocumentsRequest = z.infer<typeof queryDocumentsRequestSchema>;
 
 export const queryDocumentsResponseSchema = z.object({
   ids: z.array(z.array(documentIdSchema).readonly()).readonly(),
-  documents: z
-    .array(z.array(documentContentSchema.nullable()).readonly())
-    .readonly()
-    .optional(),
-  embeddings: z
-    .array(z.array(embeddingSchema.nullable()).readonly())
-    .readonly()
-    .optional(),
-  metadatas: z
-    .array(z.array(defaultMetadataSchema.nullable()).readonly())
-    .readonly()
-    .optional(),
+  documents: z.array(z.array(documentContentSchema.nullable()).readonly()).readonly().optional(),
+  embeddings: z.array(z.array(embeddingSchema.nullable()).readonly()).readonly().optional(),
+  metadatas: z.array(z.array(defaultMetadataSchema.nullable()).readonly()).readonly().optional(),
   distances: z.array(z.array(z.number()).readonly()).readonly().optional(),
 });
 
-export type QueryDocumentsResponse = z.infer<
-  typeof queryDocumentsResponseSchema
->;
+export type QueryDocumentsResponse = z.infer<typeof queryDocumentsResponseSchema>;
 
 // ============================================================================
 // Update Documents Schemas
@@ -111,17 +97,13 @@ export const updateDocumentsRequestSchema = z.object({
   metadatas: z.array(defaultMetadataSchema).readonly().optional(),
 });
 
-export type UpdateDocumentsRequest = z.infer<
-  typeof updateDocumentsRequestSchema
->;
+export type UpdateDocumentsRequest = z.infer<typeof updateDocumentsRequestSchema>;
 
 export const updateDocumentsResponseSchema = z.object({
   updated: z.number().int().nonnegative(),
 });
 
-export type UpdateDocumentsResponse = z.infer<
-  typeof updateDocumentsResponseSchema
->;
+export type UpdateDocumentsResponse = z.infer<typeof updateDocumentsResponseSchema>;
 
 // ============================================================================
 // Upsert Documents Schemas
@@ -134,22 +116,17 @@ export const upsertDocumentsRequestSchema = z
     embeddings: z.array(embeddingSchema).readonly().optional(),
     metadatas: z.array(defaultMetadataSchema).readonly().optional(),
   })
-  .refine(
-    (data) => data.documents !== undefined || data.embeddings !== undefined,
-    { message: "Either documents or embeddings must be provided" }
-  );
+  .refine((data) => data.documents !== undefined || data.embeddings !== undefined, {
+    message: "Either documents or embeddings must be provided",
+  });
 
-export type UpsertDocumentsRequest = z.infer<
-  typeof upsertDocumentsRequestSchema
->;
+export type UpsertDocumentsRequest = z.infer<typeof upsertDocumentsRequestSchema>;
 
 export const upsertDocumentsResponseSchema = z.object({
   upserted: z.number().int().nonnegative(),
 });
 
-export type UpsertDocumentsResponse = z.infer<
-  typeof upsertDocumentsResponseSchema
->;
+export type UpsertDocumentsResponse = z.infer<typeof upsertDocumentsResponseSchema>;
 
 // ============================================================================
 // Delete Documents Schemas
@@ -165,17 +142,13 @@ export const deleteDocumentsRequestSchema = z
     message: "Either ids or where filter must be provided",
   });
 
-export type DeleteDocumentsRequest = z.infer<
-  typeof deleteDocumentsRequestSchema
->;
+export type DeleteDocumentsRequest = z.infer<typeof deleteDocumentsRequestSchema>;
 
 export const deleteDocumentsResponseSchema = z.object({
   deleted: z.boolean(),
 });
 
-export type DeleteDocumentsResponse = z.infer<
-  typeof deleteDocumentsResponseSchema
->;
+export type DeleteDocumentsResponse = z.infer<typeof deleteDocumentsResponseSchema>;
 
 // ============================================================================
 // Count Documents Schema
@@ -185,9 +158,7 @@ export const countDocumentsResponseSchema = z.object({
   count: z.number().int().nonnegative(),
 });
 
-export type CountDocumentsResponse = z.infer<
-  typeof countDocumentsResponseSchema
->;
+export type CountDocumentsResponse = z.infer<typeof countDocumentsResponseSchema>;
 
 // ============================================================================
 // Peek Documents Schemas

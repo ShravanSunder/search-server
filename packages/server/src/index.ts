@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server";
+import { loadConfig } from "./server-config.js";
 import { createApp } from "./server/hono-app.js";
 import { ChromaClientService } from "./services/chroma-client.service.js";
-import { loadConfig } from "./server-config.js";
 
 async function main(): Promise<void> {
   const config = loadConfig();
@@ -15,9 +15,7 @@ async function main(): Promise<void> {
   // Verify connection
   try {
     await chromaClient.heartbeat();
-    console.log(
-      `Connected to ChromaDB at ${config.chromaHost}:${config.chromaPort}`
-    );
+    console.log(`Connected to ChromaDB at ${config.chromaHost}:${config.chromaPort}`);
   } catch (error) {
     console.error("Failed to connect to ChromaDB:", error);
     process.exit(1);

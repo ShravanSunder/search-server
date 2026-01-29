@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
+import type { GroupByClause, SearchResultItem } from "@search-server/sdk";
+import { describe, expect, it } from "vitest";
 import { GroupByAggregatorService } from "../group-by-aggregator.service.js";
-import type { SearchResultItem, GroupByClause } from "@search-server/sdk";
 
 describe("GroupByAggregatorService", () => {
   const service = new GroupByAggregatorService();
@@ -140,7 +140,7 @@ describe("GroupByAggregatorService", () => {
 
       const groupA = groups.find((g) => g.groupValue === "A");
       // 2023 < 2024, so year 2023 items come first
-      expect(groupA?.items[0]?.metadata?.["year"]).toBe(2023);
+      expect(groupA?.items[0]?.metadata?.year).toBe(2023);
     });
   });
 
@@ -169,7 +169,7 @@ describe("GroupByAggregatorService", () => {
 
       const groupA = groups.find((g) => g.groupValue === "A");
       // 2024 > 2023, so year 2024 items come first
-      expect(groupA?.items[0]?.metadata?.["year"]).toBe(2024);
+      expect(groupA?.items[0]?.metadata?.year).toBe(2024);
     });
   });
 
@@ -276,8 +276,8 @@ describe("GroupByAggregatorService", () => {
       const groups = service.process(results, config);
 
       // Alphabetically: apple, banana
-      expect(groups[0]?.items[0]?.metadata?.["name"]).toBe("apple");
-      expect(groups[0]?.items[1]?.metadata?.["name"]).toBe("banana");
+      expect(groups[0]?.items[0]?.metadata?.name).toBe("apple");
+      expect(groups[0]?.items[1]?.metadata?.name).toBe("banana");
     });
 
     it("handles numeric metadata value grouping", () => {

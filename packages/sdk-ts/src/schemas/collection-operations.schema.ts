@@ -15,9 +15,7 @@ export const createCollectionRequestSchema = z.object({
   getOrCreate: z.boolean().optional(),
 });
 
-export type CreateCollectionRequest = z.infer<
-  typeof createCollectionRequestSchema
->;
+export type CreateCollectionRequest = z.infer<typeof createCollectionRequestSchema>;
 
 // ============================================================================
 // Collection Info Schema
@@ -40,17 +38,13 @@ export const createCollectionResponseSchema = z.object({
   collection: collectionInfoSchema,
 });
 
-export type CreateCollectionResponse = z.infer<
-  typeof createCollectionResponseSchema
->;
+export type CreateCollectionResponse = z.infer<typeof createCollectionResponseSchema>;
 
 export const listCollectionsResponseSchema = z.object({
   collections: z.array(collectionInfoSchema).readonly(),
 });
 
-export type ListCollectionsResponse = z.infer<
-  typeof listCollectionsResponseSchema
->;
+export type ListCollectionsResponse = z.infer<typeof listCollectionsResponseSchema>;
 
 export const getCollectionResponseSchema = z.object({
   collection: collectionInfoSchema,
@@ -63,6 +57,4 @@ export const deleteCollectionResponseSchema = z.object({
   name: z.string(),
 });
 
-export type DeleteCollectionResponse = z.infer<
-  typeof deleteCollectionResponseSchema
->;
+export type DeleteCollectionResponse = z.infer<typeof deleteCollectionResponseSchema>;

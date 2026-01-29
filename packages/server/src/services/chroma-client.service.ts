@@ -1,9 +1,5 @@
-import {
-  ChromaClient,
-  type Collection,
-  type Metadata,
-  DefaultEmbeddingFunction,
-} from "chromadb";
+import { DefaultEmbeddingFunction } from "@chroma-core/default-embed";
+import { ChromaClient, type Collection, type Metadata } from "chromadb";
 
 export interface ChromaClientConfig {
   readonly host: string;
@@ -21,7 +17,9 @@ export class ChromaClientService {
 
   constructor(config: ChromaClientConfig) {
     this.client = new ChromaClient({
-      path: `http://${config.host}:${config.port}`,
+      host: config.host,
+      port: config.port,
+      ssl: false,
     });
     this.embeddingFunction = new DefaultEmbeddingFunction();
   }
@@ -33,7 +31,7 @@ export class ChromaClientService {
   async createCollection(
     name: string,
     metadata?: Metadata,
-    getOrCreate?: boolean
+    getOrCreate?: boolean,
   ): Promise<Collection> {
     const params = {
       name,
@@ -56,8 +54,10 @@ export class ChromaClientService {
 
   async listCollections(): Promise<CollectionInfo[]> {
     const collections = await this.client.listCollections();
-    // ChromaDB returns strings in current versions
-    return collections.map((col) => ({ name: col }));
+    return collections.map((col) => ({
+      name: col.name,
+      ...(col.metadata && { metadata: col.metadata }),
+    }));
   }
 
   async deleteCollection(name: string): Promise<void> {

@@ -1,15 +1,15 @@
-import type { Collection } from "chromadb";
 import type {
+  KnnQuery,
+  RrfClause,
   SearchRequest,
   SearchResponse,
   SearchResultItem,
-  KnnQuery,
-  RrfClause,
 } from "@search-server/sdk";
+import type { Collection } from "chromadb";
+import { FieldSelectorService } from "./field-selector.service.js";
+import { GroupByAggregatorService } from "./group-by-aggregator.service.js";
 import { KnnQueryExecutorService } from "./knn-query-executor.service.js";
 import { RrfFusionService } from "./rrf-fusion.service.js";
-import { GroupByAggregatorService } from "./group-by-aggregator.service.js";
-import { FieldSelectorService } from "./field-selector.service.js";
 
 export class SearchExecutorService {
   private readonly knnExecutor: KnnQueryExecutorService;
@@ -48,7 +48,7 @@ export class SearchExecutorService {
       const limit = this.getLimit(request.limit);
       const paginatedGroups = allGroups.slice(
         offset,
-        limit !== undefined ? offset + limit : undefined
+        limit !== undefined ? offset + limit : undefined,
       );
 
       // Field selection on items within paginated groups (last)
@@ -96,26 +96,18 @@ export class SearchExecutorService {
     return rank !== null && typeof rank === "object" && "ranks" in rank;
   }
 
-  private async executeKnn(
-    request: SearchRequest
-  ): Promise<SearchResultItem[]> {
+  private async executeKnn(request: SearchRequest): Promise<SearchResultItem[]> {
     const knn = request.rank as KnnQuery;
     return this.knnExecutor.execute(knn, request.where, request.whereDocument);
   }
 
-  private async executeRrf(
-    request: SearchRequest
-  ): Promise<SearchResultItem[]> {
+  private async executeRrf(request: SearchRequest): Promise<SearchResultItem[]> {
     const rrf = request.rank as RrfClause;
 
     // Execute each KNN query in the RRF
     const queryResults: SearchResultItem[][] = [];
     for (const knn of rrf.ranks) {
-      const results = await this.knnExecutor.execute(
-        knn,
-        request.where,
-        request.whereDocument
-      );
+      const results = await this.knnExecutor.execute(knn, request.where, request.whereDocument);
       queryResults.push(results);
     }
 

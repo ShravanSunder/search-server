@@ -7,11 +7,11 @@
  * Start ChromaDB: chroma run --host 0.0.0.0 --port 8000
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
+import type { Hono } from "hono";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import type { AppEnv } from "../../src/server/app-context.js";
 import { createApp } from "../../src/server/hono-app.js";
 import { ChromaClientService } from "../../src/services/chroma-client.service.js";
-import type { Hono } from "hono";
-import type { AppEnv } from "../../src/server/app-context.js";
 
 describe("Search API Integration", () => {
   let app: Hono<AppEnv>;
@@ -20,8 +20,8 @@ describe("Search API Integration", () => {
 
   beforeAll(async () => {
     chromaClient = new ChromaClientService({
-      host: process.env["CHROMA_HOST"] ?? "localhost",
-      port: Number(process.env["CHROMA_PORT"]) || 8000,
+      host: process.env.CHROMA_HOST ?? "localhost",
+      port: Number(process.env.CHROMA_PORT) || 8000,
     });
 
     // Verify ChromaDB is running
@@ -29,18 +29,14 @@ describe("Search API Integration", () => {
       await chromaClient.heartbeat();
     } catch {
       throw new Error(
-        "ChromaDB is not running. Start it with: chroma run --host 0.0.0.0 --port 8000"
+        "ChromaDB is not running. Start it with: chroma run --host 0.0.0.0 --port 8000",
       );
     }
 
     app = createApp({ chromaClient });
 
     // Create test collection
-    const collection = await chromaClient.createCollection(
-      testCollectionName,
-      undefined,
-      true
-    );
+    const collection = await chromaClient.createCollection(testCollectionName, undefined, true);
 
     // Add test documents with embeddings
     await collection.add({
@@ -85,16 +81,13 @@ describe("Search API Integration", () => {
 
   describe("KNN Search", () => {
     it("performs basic KNN search", async () => {
-      const res = await app.request(
-        `/collections/${testCollectionName}/search`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            rank: { query: [0.2, 0.3, 0.4, 0.5, 0.6], limit: 10 },
-          }),
-        }
-      );
+      const res = await app.request(`/collections/${testCollectionName}/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rank: { query: [0.2, 0.3, 0.4, 0.5, 0.6], limit: 10 },
+        }),
+      });
 
       expect(res.status).toBe(200);
       const body = await res.json();
@@ -104,17 +97,14 @@ describe("Search API Integration", () => {
     });
 
     it("applies where filter", async () => {
-      const res = await app.request(
-        `/collections/${testCollectionName}/search`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            rank: { query: [0.3, 0.4, 0.5, 0.6, 0.7], limit: 10 },
-            where: { category: "AI" },
-          }),
-        }
-      );
+      const res = await app.request(`/collections/${testCollectionName}/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rank: { query: [0.3, 0.4, 0.5, 0.6, 0.7], limit: 10 },
+          where: { category: "AI" },
+        }),
+      });
 
       expect(res.status).toBe(200);
       const body = await res.json();
@@ -126,17 +116,14 @@ describe("Search API Integration", () => {
     });
 
     it("applies pagination with limit and offset", async () => {
-      const res = await app.request(
-        `/collections/${testCollectionName}/search`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            rank: { query: [0.3, 0.4, 0.5, 0.6, 0.7], limit: 10 },
-            limit: { limit: 2, offset: 1 },
-          }),
-        }
-      );
+      const res = await app.request(`/collections/${testCollectionName}/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rank: { query: [0.3, 0.4, 0.5, 0.6, 0.7], limit: 10 },
+          limit: { limit: 2, offset: 1 },
+        }),
+      });
 
       expect(res.status).toBe(200);
       const body = await res.json();
@@ -146,17 +133,14 @@ describe("Search API Integration", () => {
 
   describe("Field Selection", () => {
     it("returns only selected fields", async () => {
-      const res = await app.request(
-        `/collections/${testCollectionName}/search`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            rank: { query: [0.2, 0.3, 0.4, 0.5, 0.6], limit: 10 },
-            select: { keys: ["#score", "category"] },
-          }),
-        }
-      );
+      const res = await app.request(`/collections/${testCollectionName}/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rank: { query: [0.2, 0.3, 0.4, 0.5, 0.6], limit: 10 },
+          select: { keys: ["#score", "category"] },
+        }),
+      });
 
       expect(res.status).toBe(200);
       const body = await res.json();
@@ -168,7 +152,7 @@ describe("Search API Integration", () => {
         // Only category should be in metadata
         if (result.metadata) {
           expect(Object.keys(result.metadata)).toContain("category");
-          expect(result.metadata["year"]).toBeUndefined();
+          expect(result.metadata.year).toBeUndefined();
         }
       }
     });
@@ -176,20 +160,17 @@ describe("Search API Integration", () => {
 
   describe("GroupBy", () => {
     it("groups results by metadata field", async () => {
-      const res = await app.request(
-        `/collections/${testCollectionName}/search`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            rank: { query: [0.3, 0.4, 0.5, 0.6, 0.7], limit: 10 },
-            groupBy: {
-              keys: { field: "category" },
-              aggregate: { $min_k: { keys: { field: "#distance" }, k: 1 } },
-            },
-          }),
-        }
-      );
+      const res = await app.request(`/collections/${testCollectionName}/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rank: { query: [0.3, 0.4, 0.5, 0.6, 0.7], limit: 10 },
+          groupBy: {
+            keys: { field: "category" },
+            aggregate: { $min_k: { keys: { field: "#distance" }, k: 1 } },
+          },
+        }),
+      });
 
       expect(res.status).toBe(200);
       const body = await res.json();
@@ -236,9 +217,7 @@ describe("Search API Integration", () => {
       const body = await res.json();
       expect(body.collections).toBeInstanceOf(Array);
 
-      const collectionNames = body.collections.map(
-        (c: { name: string }) => c.name
-      );
+      const collectionNames = body.collections.map((c: { name: string }) => c.name);
       expect(collectionNames).toContain(crudCollectionName);
     });
 
@@ -264,9 +243,7 @@ describe("Search API Integration", () => {
       // Verify it's deleted
       const listRes = await app.request("/collections", { method: "GET" });
       const listBody = await listRes.json();
-      const collectionNames = listBody.collections.map(
-        (c: { name: string }) => c.name
-      );
+      const collectionNames = listBody.collections.map((c: { name: string }) => c.name);
       expect(collectionNames).not.toContain(crudCollectionName);
     });
   });
@@ -328,54 +305,44 @@ describe("Search API Integration", () => {
     });
 
     it("updates documents", async () => {
-      const res = await app.request(
-        `/collections/${docCollectionName}/update`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ids: ["d1"],
-            metadatas: [{ type: "updated" }],
-          }),
-        }
-      );
+      const res = await app.request(`/collections/${docCollectionName}/update`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ids: ["d1"],
+          metadatas: [{ type: "updated" }],
+        }),
+      });
 
       expect(res.status).toBe(200);
       const body = await res.json();
       expect(body.updated).toBe(1);
 
       // Verify update
-      const getRes = await app.request(
-        `/collections/${docCollectionName}/get`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ids: ["d1"] }),
-        }
-      );
+      const getRes = await app.request(`/collections/${docCollectionName}/get`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: ["d1"] }),
+      });
       const getBody = await getRes.json();
       expect(getBody.metadatas?.[0]?.type).toBe("updated");
     });
 
     it("deletes documents by ID", async () => {
-      const res = await app.request(
-        `/collections/${docCollectionName}/documents`,
-        {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ids: ["d2"] }),
-        }
-      );
+      const res = await app.request(`/collections/${docCollectionName}/documents`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: ["d2"] }),
+      });
 
       expect(res.status).toBe(200);
       const body = await res.json();
       expect(body.deleted).toBe(true);
 
       // Verify deletion
-      const countRes = await app.request(
-        `/collections/${docCollectionName}/count`,
-        { method: "GET" }
-      );
+      const countRes = await app.request(`/collections/${docCollectionName}/count`, {
+        method: "GET",
+      });
       const countBody = await countRes.json();
       expect(countBody.count).toBe(1);
     });

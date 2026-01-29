@@ -19,7 +19,7 @@ healthRouter.get("/", async (c) => {
         status: "degraded",
         chromadb: "disconnected",
       },
-      503
+      503,
     );
   }
 });

@@ -18,15 +18,14 @@ type WhereDocumentClauseInput =
   | { $and: WhereDocumentClauseInput[] }
   | { $or: WhereDocumentClauseInput[] };
 
-export const whereDocumentClauseSchema: z.ZodType<WhereDocumentClauseInput> =
-  z.lazy(() =>
-    z.union([
-      whereDocContainsSchema,
-      whereDocNotContainsSchema,
-      z.object({ $and: z.array(whereDocumentClauseSchema) }),
-      z.object({ $or: z.array(whereDocumentClauseSchema) }),
-    ])
-  );
+export const whereDocumentClauseSchema: z.ZodType<WhereDocumentClauseInput> = z.lazy(() =>
+  z.union([
+    whereDocContainsSchema,
+    whereDocNotContainsSchema,
+    z.object({ $and: z.array(whereDocumentClauseSchema) }),
+    z.object({ $or: z.array(whereDocumentClauseSchema) }),
+  ]),
+);
 
 // Inferred type from schema
 export type WhereDocumentClause = z.infer<typeof whereDocumentClauseSchema>;

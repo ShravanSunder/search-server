@@ -14,10 +14,7 @@
         ]
       },
       {
-        "$and": [
-          { "department": "finance" },
-          { "status": "pending" }
-        ]
+        "$and": [{ "department": "finance" }, { "status": "pending" }]
       },
       { "type": "settlement" }
     ]

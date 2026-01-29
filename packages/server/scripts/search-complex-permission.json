@@ -9,9 +9,7 @@
       { "accessLevel": "public" },
       { "accessLevel": "internal" },
       {
-        "$and": [
-          { "owner": "alice" }
-        ]
+        "$and": [{ "owner": "alice" }]
       }
     ]
   },
