@@ -6,22 +6,22 @@
  *
  * Usage:
  *   # Upload entities from JSONL file
- *   pnpm entity upload <collection> <file.jsonl> [--server-url=http://localhost:3001]
+ *   pnpm entity upload <collection> <file.jsonl> [--server-url=http://localhost:3000]
  *
  *   # Search for entities
- *   pnpm entity search <collection> <query> [--limit=10] [--server-url=http://localhost:3001]
+ *   pnpm entity search <collection> <query> [--limit=10] [--server-url=http://localhost:3000]
  *
  *   # List collections
- *   pnpm entity list [--server-url=http://localhost:3001]
+ *   pnpm entity list [--server-url=http://localhost:3000]
  *
  *   # Create collection
- *   pnpm entity create <collection> [--server-url=http://localhost:3001]
+ *   pnpm entity create <collection> [--server-url=http://localhost:3000]
  *
  *   # Delete collection
- *   pnpm entity delete <collection> [--server-url=http://localhost:3001]
+ *   pnpm entity delete <collection> [--server-url=http://localhost:3000]
  *
  *   # Count documents in collection
- *   pnpm entity count <collection> [--server-url=http://localhost:3001]
+ *   pnpm entity count <collection> [--server-url=http://localhost:3000]
  *
  * JSONL Format:
  *   Each line should be a JSON object with:
@@ -40,6 +40,7 @@
 import { createReadStream } from "node:fs";
 import { createInterface } from "node:readline";
 import { parseArgs } from "node:util";
+import type { SearchRequest, SearchResponse, SearchResultItem } from "@search-server/sdk";
 
 interface Entity {
   id: string;
@@ -56,15 +57,15 @@ interface ParsedArgs {
 function parseCliArgs(): ParsedArgs {
   const { values } = parseArgs({
     options: {
-      "server-url": { type: "string", default: "http://localhost:3001" },
+      "server-url": { type: "string", default: "http://localhost:3000" },
       limit: { type: "string", default: "10" },
     },
     allowPositionals: true,
   });
 
   return {
-    serverUrl: values["server-url"] ?? "http://localhost:3001",
-    limit: parseInt(values["limit"] ?? "10", 10),
+    serverUrl: values["server-url"] ?? "http://localhost:3000",
+    limit: Number.parseInt(values.limit ?? "10", 10),
   };
 }
 
@@ -73,7 +74,7 @@ async function readJsonlFile(filePath: string): Promise<Entity[]> {
   const fileStream = createReadStream(filePath);
   const rl = createInterface({
     input: fileStream,
-    crlfDelay: Infinity,
+    crlfDelay: Number.POSITIVE_INFINITY,
   });
 
   let lineNumber = 0;
@@ -91,9 +92,7 @@ async function readJsonlFile(filePath: string): Promise<Entity[]> {
         continue;
       }
       if (!entity.content && !entity.embedding) {
-        console.error(
-          `Line ${lineNumber}: Entity must have 'content' or 'embedding'`
-        );
+        console.error(`Line ${lineNumber}: Entity must have 'content' or 'embedding'`);
         continue;
       }
       entities.push(entity);
@@ -108,7 +107,7 @@ async function readJsonlFile(filePath: string): Promise<Entity[]> {
 async function uploadEntities(
   serverUrl: string,
   collection: string,
-  entities: Entity[]
+  entities: Entity[],
 ): Promise<void> {
   const batchSize = 100;
 
@@ -117,25 +116,16 @@ async function uploadEntities(
 
     const payload = {
       ids: batch.map((e) => e.id),
-      documents: batch.some((e) => e.content)
-        ? batch.map((e) => e.content ?? "")
-        : undefined,
-      embeddings: batch.some((e) => e.embedding)
-        ? batch.map((e) => e.embedding ?? [])
-        : undefined,
-      metadatas: batch.some((e) => e.metadata)
-        ? batch.map((e) => e.metadata ?? {})
-        : undefined,
+      documents: batch.some((e) => e.content) ? batch.map((e) => e.content ?? "") : undefined,
+      embeddings: batch.some((e) => e.embedding) ? batch.map((e) => e.embedding ?? []) : undefined,
+      metadatas: batch.some((e) => e.metadata) ? batch.map((e) => e.metadata ?? {}) : undefined,
     };
 
-    const response = await fetch(
-      `${serverUrl}/collections/${collection}/add`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    );
+    const response = await fetch(`${serverUrl}/collections/${collection}/add`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
     if (!response.ok) {
       const error = await response.text();
@@ -143,51 +133,9 @@ async function uploadEntities(
     }
 
     const result = (await response.json()) as { added: number };
-    console.log(
-      `Uploaded batch ${Math.floor(i / batchSize) + 1}: ${result.added} entities`
-    );
+    console.log(`Uploaded batch ${Math.floor(i / batchSize) + 1}: ${result.added} entities`);
   }
 }
-
-interface SearchRequest {
-  rank: {
-    query: string | number[];
-    limit?: number;
-    returnRank?: boolean;
-  } | {
-    ranks: Array<{ query: string | number[]; limit?: number; returnRank?: boolean }>;
-    k?: number;
-    weights?: number[];
-    normalize?: boolean;
-  };
-  where?: Record<string, unknown>;
-  whereDocument?: Record<string, unknown>;
-  limit?: number | { limit: number; offset?: number };
-  select?: { keys: string[] };
-  groupBy?: {
-    keys: { field: string } | Array<{ field: string }>;
-    aggregate: { $min_k: { keys: { field: string }; k: number } } | { $max_k: { keys: { field: string }; k: number } };
-  };
-}
-
-interface SearchResultItem {
-  id: string;
-  document?: string;
-  embedding?: number[];
-  metadata?: Record<string, unknown>;
-  score?: number;
-  distance?: number;
-}
-
-interface GroupedResult {
-  groupKey: string;
-  groupValue: string | number | boolean;
-  items: SearchResultItem[];
-}
-
-type SearchResponse =
-  | { grouped: false; results: SearchResultItem[]; total: number; took: number }
-  | { grouped: true; groups: GroupedResult[]; totalGroups: number; totalItems: number; took: number };
 
 async function loadSearchRequest(input: string): Promise<SearchRequest> {
   // Check if input is a file path
@@ -204,16 +152,13 @@ async function loadSearchRequest(input: string): Promise<SearchRequest> {
 async function searchEntities(
   serverUrl: string,
   collection: string,
-  request: SearchRequest
+  request: SearchRequest,
 ): Promise<void> {
-  const response = await fetch(
-    `${serverUrl}/collections/${collection}/search`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(request),
-    }
-  );
+  const response = await fetch(`${serverUrl}/collections/${collection}/search`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
 
   if (!response.ok) {
     const error = await response.text();
@@ -223,7 +168,9 @@ async function searchEntities(
   const result = (await response.json()) as SearchResponse;
 
   if (result.grouped) {
-    console.log(`\nFound ${result.totalGroups} groups (${result.totalItems} items) in ${result.took.toFixed(2)}ms:\n`);
+    console.log(
+      `\nFound ${result.totalGroups} groups (${result.totalItems} items) in ${result.took.toFixed(2)}ms:\n`,
+    );
 
     for (const group of result.groups) {
       console.log(`Group: ${group.groupKey} = ${group.groupValue}`);
@@ -255,9 +202,7 @@ function printResultItem(item: SearchResultItem, index: number, indent: string):
   }
   if (item.document) {
     const preview =
-      item.document.length > 100
-        ? item.document.slice(0, 100) + "..."
-        : item.document;
+      item.document.length > 100 ? `${item.document.slice(0, 100)}...` : item.document;
     console.log(`${indent}   Content: ${preview}`);
   }
   if (item.metadata && Object.keys(item.metadata).length > 0) {
@@ -291,10 +236,7 @@ async function listCollections(serverUrl: string): Promise<void> {
   }
 }
 
-async function createCollection(
-  serverUrl: string,
-  name: string
-): Promise<void> {
+async function createCollection(serverUrl: string, name: string): Promise<void> {
   const response = await fetch(`${serverUrl}/collections`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -312,10 +254,7 @@ async function createCollection(
   console.log(`Created collection: ${result.collection.name}`);
 }
 
-async function deleteCollection(
-  serverUrl: string,
-  name: string
-): Promise<void> {
+async function deleteCollection(serverUrl: string, name: string): Promise<void> {
   const response = await fetch(`${serverUrl}/collections/${name}`, {
     method: "DELETE",
   });
@@ -328,16 +267,10 @@ async function deleteCollection(
   console.log(`Deleted collection: ${name}`);
 }
 
-async function countDocuments(
-  serverUrl: string,
-  collection: string
-): Promise<void> {
-  const response = await fetch(
-    `${serverUrl}/collections/${collection}/count`,
-    {
-      method: "GET",
-    }
-  );
+async function countDocuments(serverUrl: string, collection: string): Promise<void> {
+  const response = await fetch(`${serverUrl}/collections/${collection}/count`, {
+    method: "GET",
+  });
 
   if (!response.ok) {
     const error = await response.text();
@@ -364,7 +297,7 @@ Commands:
   count <collection>                 Count documents in collection
 
 Options:
-  --server-url=<url>   Server URL (default: http://localhost:3001)
+  --server-url=<url>   Server URL (default: http://localhost:3000)
 
 Search Request:
   <request> can be:
@@ -400,7 +333,7 @@ JSONL Format (for upload):
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const command = args[0];
-  const { serverUrl, limit } = parseCliArgs();
+  const { serverUrl } = parseCliArgs();
 
   if (!command || command === "help" || command === "--help") {
     printUsage();
@@ -427,7 +360,7 @@ async function main(): Promise<void> {
 
         console.log(`Uploading to collection '${collection}'...`);
         await uploadEntities(serverUrl, collection, entities);
-        console.log(`\nUpload complete!`);
+        console.log("\nUpload complete!");
         break;
       }
 
@@ -439,7 +372,9 @@ async function main(): Promise<void> {
           console.error("  request: inline JSON or path to .json file");
           console.error("");
           console.error("Examples:");
-          console.error("  pnpm entity search my-col '{\"rank\":{\"query\":[0.1,0.2,0.3],\"limit\":10}}'");
+          console.error(
+            '  pnpm entity search my-col \'{"rank":{"query":[0.1,0.2,0.3],"limit":10}}\'',
+          );
           console.error("  pnpm entity search my-col scripts/search-request.json");
           process.exit(1);
         }

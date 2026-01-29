@@ -42,21 +42,19 @@ export type WhereComparisonValue = z.infer<typeof whereComparisonValueSchema>;
 export type WhereClauseBase = {
   readonly $and?: readonly WhereClauseBase[];
   readonly $or?: readonly WhereClauseBase[];
-  readonly [key: string]:
-    | WhereComparisonValue
-    | readonly WhereClauseBase[]
-    | undefined;
+  readonly [key: string]: WhereComparisonValue | readonly WhereClauseBase[] | undefined;
 };
 
 // Create the recursive schema - use simple approach without strict typing
 // to avoid TypeScript recursive type issues
-export const whereClauseSchema = z.lazy((): z.ZodTypeAny =>
-  z
-    .object({
-      $and: z.array(whereClauseSchema).optional(),
-      $or: z.array(whereClauseSchema).optional(),
-    })
-    .catchall(whereComparisonValueSchema)
+export const whereClauseSchema = z.lazy(
+  (): z.ZodTypeAny =>
+    z
+      .object({
+        $and: z.array(whereClauseSchema).optional(),
+        $or: z.array(whereClauseSchema).optional(),
+      })
+      .catchall(whereComparisonValueSchema),
 );
 
 export type WhereClause = z.infer<typeof whereClauseSchema>;

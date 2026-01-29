@@ -4,16 +4,10 @@ import { z } from "zod";
 // Primitive Schemas (Base building blocks)
 // ============================================================================
 
-export const metadataValueSchema = z.union([
-  z.string(),
-  z.number(),
-  z.boolean(),
-]);
+export const metadataValueSchema = z.union([z.string(), z.number(), z.boolean()]);
 
 // Default metadata schema - clients can override with their own
-export const defaultMetadataSchema = z
-  .record(z.string(), metadataValueSchema)
-  .readonly();
+export const defaultMetadataSchema = z.record(z.string(), metadataValueSchema).readonly();
 
 export const embeddingSchema = z.array(z.number()).readonly();
 
@@ -75,7 +69,7 @@ export interface Document<TMetadata = DefaultMetadata> {
  * const articleDocumentSchema = createDocumentSchema(articleMetadataSchema);
  */
 export function createDocumentSchema<TMetadataSchema extends z.ZodTypeAny>(
-  metadataSchema: TMetadataSchema
+  metadataSchema: TMetadataSchema,
 ): z.ZodObject<{
   id: typeof documentIdSchema;
   content: z.ZodOptional<typeof documentContentSchema>;
@@ -115,7 +109,7 @@ export type Result<TData, TError = ApiError> =
 
 // Generic API response wrapper factory
 export function createApiResponseSchema<TDataSchema extends z.ZodTypeAny>(
-  dataSchema: TDataSchema
+  dataSchema: TDataSchema,
 ): z.ZodObject<{
   data: TDataSchema;
   meta: z.ZodOptional<z.ZodObject<{ took: z.ZodNumber }>>;
@@ -134,12 +128,7 @@ export function createApiResponseSchema<TDataSchema extends z.ZodTypeAny>(
 // Include Options Schema
 // ============================================================================
 
-export const includeOptionSchema = z.enum([
-  "documents",
-  "embeddings",
-  "metadatas",
-  "distances",
-]);
+export const includeOptionSchema = z.enum(["documents", "embeddings", "metadatas", "distances"]);
 
 export const includeOptionsSchema = z.array(includeOptionSchema).readonly();
 

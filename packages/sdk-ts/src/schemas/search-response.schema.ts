@@ -1,9 +1,9 @@
 import { z } from "zod";
 import {
-  documentIdSchema,
-  documentContentSchema,
-  embeddingSchema,
   defaultMetadataSchema,
+  documentContentSchema,
+  documentIdSchema,
+  embeddingSchema,
   metadataValueSchema,
 } from "./common.schema.js";
 
@@ -26,10 +26,8 @@ export type SearchResultItem = z.infer<typeof searchResultItemSchema>;
 // Generic Search Result Item (for typed metadata)
 // ============================================================================
 
-export function createSearchResultItemSchema<
-  TMetadataSchema extends z.ZodTypeAny,
->(
-  metadataSchema: TMetadataSchema
+export function createSearchResultItemSchema<TMetadataSchema extends z.ZodTypeAny>(
+  metadataSchema: TMetadataSchema,
 ): z.ZodObject<{
   id: typeof documentIdSchema;
   document: z.ZodOptional<typeof documentContentSchema>;
@@ -85,9 +83,7 @@ export const searchResponseSchema = z.discriminatedUnion("grouped", [
 ]);
 
 export type SearchResponse = z.infer<typeof searchResponseSchema>;
-export type UngroupedSearchResponse = z.infer<
-  typeof ungroupedSearchResponseSchema
->;
+export type UngroupedSearchResponse = z.infer<typeof ungroupedSearchResponseSchema>;
 export type GroupedSearchResponse = z.infer<typeof groupedSearchResponseSchema>;
 
 // ============================================================================

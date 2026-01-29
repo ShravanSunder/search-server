@@ -9,10 +9,7 @@
       { "status": "completed" },
       { "amount": { "$gt": 10000 } },
       {
-        "$or": [
-          { "department": "finance" },
-          { "department": "engineering" }
-        ]
+        "$or": [{ "department": "finance" }, { "department": "engineering" }]
       }
     ]
   },

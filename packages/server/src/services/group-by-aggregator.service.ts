@@ -1,16 +1,13 @@
 import type {
-  SearchResultItem,
   GroupByClause,
   GroupedSearchResult,
   KeyRef,
   MetadataValue,
+  SearchResultItem,
 } from "@search-server/sdk";
 
 export class GroupByAggregatorService {
-  process(
-    results: readonly SearchResultItem[],
-    config: GroupByClause
-  ): GroupedSearchResult[] {
+  process(results: readonly SearchResultItem[], config: GroupByClause): GroupedSearchResult[] {
     // 1. Get grouping key(s)
     const groupKeys = this.normalizeKeys(config.keys);
 
@@ -42,7 +39,7 @@ export class GroupByAggregatorService {
 
   private groupResults(
     results: readonly SearchResultItem[],
-    keys: KeyRef[]
+    keys: KeyRef[],
   ): Map<MetadataValue, SearchResultItem[]> {
     const groups = new Map<MetadataValue, SearchResultItem[]>();
 
@@ -59,14 +56,9 @@ export class GroupByAggregatorService {
     return groups;
   }
 
-  private getGroupValue(
-    item: SearchResultItem,
-    keys: KeyRef[]
-  ): MetadataValue | undefined {
+  private getGroupValue(item: SearchResultItem, keys: KeyRef[]): MetadataValue | undefined {
     if (keys.length === 1 && keys[0]) {
-      return this.getFieldValue(item, keys[0].field) as
-        | MetadataValue
-        | undefined;
+      return this.getFieldValue(item, keys[0].field) as MetadataValue | undefined;
     }
 
     // Composite key: join values with separator
@@ -76,7 +68,7 @@ export class GroupByAggregatorService {
       if (value === undefined) return undefined;
       values.push(value as string | number | boolean);
     }
-    return values.join("|");
+    return JSON.stringify(values);
   }
 
   private getFieldValue(item: SearchResultItem, field: string): unknown {
@@ -88,7 +80,7 @@ export class GroupByAggregatorService {
 
   private applyAggregation(
     items: SearchResultItem[],
-    aggregate: GroupByClause["aggregate"]
+    aggregate: GroupByClause["aggregate"],
   ): SearchResultItem[] {
     if ("$min_k" in aggregate) {
       const { keys, k } = aggregate.$min_k;
@@ -107,7 +99,7 @@ export class GroupByAggregatorService {
     items: SearchResultItem[],
     sortKeys: KeyRef[],
     direction: "asc" | "desc",
-    k: number
+    k: number,
   ): SearchResultItem[] {
     const sorted = [...items].sort((a, b) => {
       for (const key of sortKeys) {

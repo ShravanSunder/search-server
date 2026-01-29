@@ -1,23 +1,15 @@
-import { describe, it, expect } from "vitest";
+import type { RrfClause, SearchResultItem } from "@search-server/sdk";
+import { describe, expect, it } from "vitest";
 import { RrfFusionService } from "../rrf-fusion.service.js";
-import type { SearchResultItem, RrfClause } from "@search-server/sdk";
 
 describe("RrfFusionService", () => {
   const service = new RrfFusionService();
 
   describe("basic fusion", () => {
     it("fuses two ranked lists with overlapping documents", () => {
-      const list1: SearchResultItem[] = [
-        { id: "doc1" },
-        { id: "doc2" },
-        { id: "doc3" },
-      ];
+      const list1: SearchResultItem[] = [{ id: "doc1" }, { id: "doc2" }, { id: "doc3" }];
 
-      const list2: SearchResultItem[] = [
-        { id: "doc2" },
-        { id: "doc1" },
-        { id: "doc4" },
-      ];
+      const list2: SearchResultItem[] = [{ id: "doc2" }, { id: "doc1" }, { id: "doc4" }];
 
       const config: RrfClause = {
         ranks: [
@@ -31,19 +23,12 @@ describe("RrfFusionService", () => {
 
       // All unique docs should be present
       expect(result.length).toBe(4);
-      expect(result.map((r) => r.id).sort()).toEqual([
-        "doc1",
-        "doc2",
-        "doc3",
-        "doc4",
-      ]);
+      expect(result.map((r) => r.id).sort()).toEqual(["doc1", "doc2", "doc3", "doc4"]);
     });
 
     it("returns empty array for empty inputs", () => {
       const config: RrfClause = {
-        ranks: [
-          { query: "q1", returnRank: true, limit: 10 },
-        ],
+        ranks: [{ query: "q1", returnRank: true, limit: 10 }],
       };
 
       const result = service.process([[]], config);
@@ -51,10 +36,7 @@ describe("RrfFusionService", () => {
     });
 
     it("handles single list", () => {
-      const list1: SearchResultItem[] = [
-        { id: "doc1" },
-        { id: "doc2" },
-      ];
+      const list1: SearchResultItem[] = [{ id: "doc1" }, { id: "doc2" }];
 
       const config: RrfClause = {
         ranks: [{ query: "q1", returnRank: true, limit: 10 }],
@@ -73,16 +55,9 @@ describe("RrfFusionService", () => {
       // doc1 appears in both lists at rank 0 and 1
       // doc3 only appears in list1 at rank 2
       // doc1 should rank higher than doc3
-      const list1: SearchResultItem[] = [
-        { id: "doc1" },
-        { id: "doc2" },
-        { id: "doc3" },
-      ];
+      const list1: SearchResultItem[] = [{ id: "doc1" }, { id: "doc2" }, { id: "doc3" }];
 
-      const list2: SearchResultItem[] = [
-        { id: "doc2" },
-        { id: "doc1" },
-      ];
+      const list2: SearchResultItem[] = [{ id: "doc2" }, { id: "doc1" }];
 
       const config: RrfClause = {
         ranks: [
@@ -243,12 +218,8 @@ describe("RrfFusionService", () => {
 
     it("uses later item data when document appears multiple times", () => {
       // First appearance has one score, later appearance has different score
-      const list1: SearchResultItem[] = [
-        { id: "doc1", distance: 0.1 },
-      ];
-      const list2: SearchResultItem[] = [
-        { id: "doc1", distance: 0.2 },
-      ];
+      const list1: SearchResultItem[] = [{ id: "doc1", distance: 0.1 }];
+      const list2: SearchResultItem[] = [{ id: "doc1", distance: 0.2 }];
 
       const config: RrfClause = {
         ranks: [
@@ -264,11 +235,7 @@ describe("RrfFusionService", () => {
     });
 
     it("handles lists with different lengths", () => {
-      const list1: SearchResultItem[] = [
-        { id: "doc1" },
-        { id: "doc2" },
-        { id: "doc3" },
-      ];
+      const list1: SearchResultItem[] = [{ id: "doc1" }, { id: "doc2" }, { id: "doc3" }];
       const list2: SearchResultItem[] = [{ id: "doc4" }];
 
       const config: RrfClause = {

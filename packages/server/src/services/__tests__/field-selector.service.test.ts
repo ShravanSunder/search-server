@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { FieldSelectorService } from "../field-selector.service.js";
 import type { SearchResultItem, SelectClause } from "@search-server/sdk";
+import { describe, expect, it } from "vitest";
+import { FieldSelectorService } from "../field-selector.service.js";
 
 describe("FieldSelectorService", () => {
   const service = new FieldSelectorService();
@@ -81,9 +81,9 @@ describe("FieldSelectorService", () => {
       const select: SelectClause = { keys: ["title"] };
       const result = service.process([fullItem], select);
 
-      expect(result[0]?.metadata?.["title"]).toBe("Test");
-      expect(result[0]?.metadata?.["author"]).toBeUndefined();
-      expect(result[0]?.metadata?.["year"]).toBeUndefined();
+      expect(result[0]?.metadata?.title).toBe("Test");
+      expect(result[0]?.metadata?.author).toBeUndefined();
+      expect(result[0]?.metadata?.year).toBeUndefined();
     });
 
     it("handles non-existent metadata field gracefully", () => {

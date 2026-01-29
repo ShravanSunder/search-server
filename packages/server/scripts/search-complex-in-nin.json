@@ -9,10 +9,7 @@
       { "type": { "$in": ["wire", "transfer", "settlement", "dividend"] } },
       { "department": { "$nin": ["marketing", "customer_service", "operations"] } },
       {
-        "$or": [
-          { "amount": { "$gt": 100000 } },
-          { "accessLevel": "confidential" }
-        ]
+        "$or": [{ "amount": { "$gt": 100000 } }, { "accessLevel": "confidential" }]
       }
     ]
   },

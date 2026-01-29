@@ -1,13 +1,13 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { healthRouter } from "./routes/health.route.js";
+import type { ChromaClientService } from "../services/chroma-client.service.js";
+import type { AppEnv } from "./app-context.js";
+import { errorHandler } from "./middleware/error-handler.middleware.js";
 import { collectionsRouter } from "./routes/collection.route.js";
 import { documentsRouter } from "./routes/document.route.js";
+import { healthRouter } from "./routes/health.route.js";
 import { searchRouter } from "./routes/search.route.js";
-import { errorHandler } from "./middleware/error-handler.middleware.js";
-import type { AppEnv } from "./app-context.js";
-import type { ChromaClientService } from "../services/chroma-client.service.js";
 
 export interface CreateAppOptions {
   chromaClient: ChromaClientService;

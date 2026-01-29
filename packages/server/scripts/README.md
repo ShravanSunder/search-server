@@ -29,7 +29,7 @@ pnpm entity search <collection> <request>
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `--server-url` | `http://localhost:3001` | Server URL |
+| `--server-url` | `http://localhost:3000` | Server URL |
 
 ## File Structure
 

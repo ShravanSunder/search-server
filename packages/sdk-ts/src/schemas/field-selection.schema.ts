@@ -4,13 +4,7 @@ import { z } from "zod";
 // Built-in Field Schemas
 // ============================================================================
 
-export const builtInFieldSchema = z.enum([
-  "#id",
-  "#document",
-  "#embedding",
-  "#metadata",
-  "#score",
-]);
+export const builtInFieldSchema = z.enum(["#id", "#document", "#embedding", "#metadata", "#score"]);
 
 export type BuiltInField = z.infer<typeof builtInFieldSchema>;
 

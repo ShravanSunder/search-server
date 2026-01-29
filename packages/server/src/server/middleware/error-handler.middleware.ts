@@ -1,6 +1,6 @@
+import type { ApiError } from "@search-server/sdk";
 import type { ErrorHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
-import type { ApiError } from "@search-server/sdk";
 import type { AppEnv } from "../app-context.js";
 
 export const errorHandler: ErrorHandler<AppEnv> = (err, c) => {

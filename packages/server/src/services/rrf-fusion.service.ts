@@ -1,4 +1,4 @@
-import type { SearchResultItem, RrfClause } from "@search-server/sdk";
+import type { RrfClause, SearchResultItem } from "@search-server/sdk";
 
 interface RankedDocument {
   item: SearchResultItem;
@@ -16,7 +16,7 @@ export class RrfFusionService {
    */
   process(
     queryResults: readonly (readonly SearchResultItem[])[],
-    config: RrfClause
+    config: RrfClause,
   ): SearchResultItem[] {
     const k = config.k ?? 60;
     let weights = config.weights ? [...config.weights] : queryResults.map(() => 1);
@@ -62,9 +62,7 @@ export class RrfFusionService {
     // For now, we only include documents that appear in at least one ranking
 
     // Sort by RRF score (higher contribution = better, but we negate for distance semantics)
-    const sortedResults = Array.from(scoreMap.values()).sort(
-      (a, b) => b.rrfScore - a.rrfScore
-    );
+    const sortedResults = Array.from(scoreMap.values()).sort((a, b) => b.rrfScore - a.rrfScore);
 
     // Return items with RRF score as the score field (negated)
     return sortedResults.map(({ item, rrfScore }) => ({
