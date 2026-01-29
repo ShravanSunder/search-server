@@ -1,0 +1,23 @@
+{
+  "_comment": "Find specific transaction types (wire, transfer, settlement) NOT in marketing/customer_service depts",
+  "rank": {
+    "query": [0.8, 0.2, 0.1, 0.3, 0.5],
+    "limit": 50
+  },
+  "where": {
+    "$and": [
+      { "type": { "$in": ["wire", "transfer", "settlement", "dividend"] } },
+      { "department": { "$nin": ["marketing", "customer_service", "operations"] } },
+      {
+        "$or": [
+          { "amount": { "$gt": 100000 } },
+          { "accessLevel": "confidential" }
+        ]
+      }
+    ]
+  },
+  "select": {
+    "keys": ["#document", "#score", "type", "department", "amount", "accessLevel", "status"]
+  },
+  "limit": 10
+}

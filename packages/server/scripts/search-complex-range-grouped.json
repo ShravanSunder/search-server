@@ -1,0 +1,24 @@
+{
+  "_comment": "Find transactions between 1000-100000, exclude restricted, group by department showing top 2 per dept",
+  "rank": {
+    "query": [0.6, 0.4, 0.25, 0.45, 0.35],
+    "limit": 50
+  },
+  "where": {
+    "$and": [
+      { "amount": { "$gte": 1000 } },
+      { "amount": { "$lte": 100000 } },
+      { "accessLevel": { "$ne": "restricted" } },
+      { "status": "completed" }
+    ]
+  },
+  "groupBy": {
+    "keys": { "field": "department" },
+    "aggregate": {
+      "$min_k": {
+        "keys": { "field": "#distance" },
+        "k": 2
+      }
+    }
+  }
+}

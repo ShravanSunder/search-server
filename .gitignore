@@ -140,3 +140,4 @@ vite.config.ts.timestamp-*
 .pnpm-store
 *.local.*
 **/chroma.sqlite3
+chroma

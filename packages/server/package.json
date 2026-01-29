@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:integration": "vitest run --config vitest.integration.config.ts"
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "entity": "tsx scripts/entity-manager.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
