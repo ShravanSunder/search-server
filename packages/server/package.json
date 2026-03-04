@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@chroma-core/default-embed": "^0.1.9",
-    "@hono/node-server": "^1.13.7",
+    "@hono/node-server": "^1.19.10",
     "@hono/zod-validator": "^0.4.2",
     "@search-server/sdk": "workspace:*",
     "chromadb": "^3.2.2",
