@@ -21,7 +21,7 @@
     "@hono/zod-validator": "^0.4.2",
     "@search-server/sdk": "workspace:*",
     "chromadb": "^3.2.2",
-    "hono": "^4.7.0"
+    "hono": "^4.12.4"
   },
   "devDependencies": {
     "@types/node": "^22.10.7",
