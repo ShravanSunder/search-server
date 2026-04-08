@@ -56,10 +56,10 @@ importers:
         version: 0.1.9
       '@hono/node-server':
         specifier: ^1.13.7
-        version: 1.19.9(hono@4.11.7)
+        version: 1.19.9(hono@4.12.12)
       '@hono/zod-validator':
         specifier: ^0.4.2
-        version: 0.4.3(hono@4.11.7)(zod@3.25.76)
+        version: 0.4.3(hono@4.12.12)(zod@3.25.76)
       '@search-server/sdk':
         specifier: workspace:*
         version: link:../sdk-ts
@@ -67,8 +67,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2
       hono:
-        specifier: ^4.7.0
-        version: 4.11.7
+        specifier: ^4.12.12
+        version: 4.12.12
     devDependencies:
       '@types/node':
         specifier: ^22.10.7
@@ -1245,6 +1245,7 @@ packages:
 
   glob@10.5.0:
     resolution: {integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   global-agent@3.0.0:
@@ -1280,8 +1281,8 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
 
-  hono@4.11.7:
-    resolution: {integrity: sha512-l7qMiNee7t82bH3SeyUCt9UF15EVmaBvsppY2zQtrbIhl/yzBTny+YUxsVjSjQ6gaqaeVtZmGocom8TzBlA4Yw==}
+  hono@4.12.12:
+    resolution: {integrity: sha512-p1JfQMKaceuCbpJKAPKVqyqviZdS0eUxH9v82oWo1kb9xjQ5wA6iP3FNVAPDFlz5/p7d45lO+BpSk1tuSZMF4Q==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@2.0.2:
@@ -1594,6 +1595,7 @@ packages:
   tar@7.5.7:
     resolution: {integrity: sha512-fov56fJiRuThVFXD6o6/Q354S7pnWMJIVlDBYijsTNx6jKSE4pvrDTs6lUnmGvNyfJwFQQwWy3owKz1ucIhveQ==}
     engines: {node: '>=18'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   test-exclude@7.0.1:
     resolution: {integrity: sha512-pFYqmTw68LXVjeWJMST4+borgQP2AyMNbg1BpZh9LbyhUeNkeaPF9gzfPGUAnSMV3qPYdWUwDIjjCLiSDOl7vg==}
@@ -1996,13 +1998,13 @@ snapshots:
   '@esbuild/win32-x64@0.27.2':
     optional: true
 
-  '@hono/node-server@1.19.9(hono@4.11.7)':
+  '@hono/node-server@1.19.9(hono@4.12.12)':
     dependencies:
-      hono: 4.11.7
+      hono: 4.12.12
 
-  '@hono/zod-validator@0.4.3(hono@4.11.7)(zod@3.25.76)':
+  '@hono/zod-validator@0.4.3(hono@4.12.12)(zod@3.25.76)':
     dependencies:
-      hono: 4.11.7
+      hono: 4.12.12
       zod: 3.25.76
 
   '@huggingface/jinja@0.5.4': {}
@@ -2753,7 +2755,7 @@ snapshots:
 
   he@1.2.0: {}
 
-  hono@4.11.7: {}
+  hono@4.12.12: {}
 
   html-escaper@2.0.2: {}
 
